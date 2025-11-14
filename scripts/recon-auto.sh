@@ -65,3 +65,76 @@ TMPDIR="$(mktemp -d)"
 # Perintah ini bertujuan untuk menetapkan seberapa banyak jumlah sub-domain yang mau
 # diperiksa secara bersamaan
 HTTPX_THREADS=50
+
+
+# Menambahkan beberapa fungsi dasar untuk membantu proses menjalankan script
+
+# Perintah ini untuk menjalankan fungsi timestamp
+timestamp() { 
+
+# Perintah ini nantinya akan memunculkan hari dalam format
+# %Y = 2025 (tahun dengan format full)
+# %m = 11 (bulan dengan format angka
+# %d = 11 (hari dalam folder angka)
+# %H = 23 (waktu dalam folder 24 jam)
+# %M = 52 (menit)
+# %S = 30 (detik)
+date +"%Y-%m-%d %H:%M:%S";
+
+# Fungsi ini nantinya untuk menampilkan waktu saat ini ketika perintah tersebut dipanggil
+}
+
+# Perintah ini untuk menjalanakn fungsi log
+log() { 
+
+# Perintah ini nantinya bertujuan untuk menampilkan ke dalam layar sekaligus untuk 
+# menyimpan ke dalam file log
+
+# printf = berfungsi untuk mencetak keluaran dengan format tertentu
+# %s %s\n = berfungsi untuk mencetak format 2 string yang digunakan
+# NB: String pertama fungsi timestamp, String kedua pesan yang dimasukkan
+
+# $(timestamp) = memanggil fungsi yang dibuatkan sebelumnya
+# $* = mencetak string yang diberikan pada saat menjalankan fungsi log
+# NB: log "cetak ke layar" => string = cetak ke layar
+
+# | = berfungsi untuk mengirimkan keluaran ke perintah berikutnya
+# tee = berfungsi untuk menampilkan hasil dan mengirimkan hasil ke dalam file
+# -a = berfungsi untuk menambahkan hasil keluaran ke baris paling akhir
+# $PROGRESS_LOG = nama file yang digunakan untuk file log
+printf "%s %s\n" "$(timestamp)" "$*" | tee -a "$PROGRESS_LOG"
+
+# Fungsi ini nantinya digunakan untuk menampilkan pesan terhadap proses yang dijalankan
+# dan berfungsi untuk menyimpan semua proses yang dilakukan
+}
+
+# Perintah ini untuk menjalankan fungsi dari err
+err() {
+
+# Perintah ini nantinya bertujuan untuk menampilkan ke dalam layar sekaligus untuk
+# menyimpan ke dalam file log
+
+# printf = berfungsi untuk mencetak keluaran dengan format tertentu
+# %s %s\n = berfungsi untuk mencetak format 2 string yang digunakan
+# NB: String pertama fungsi timestamp, String kedua pesan yang dimasukkan
+
+# $(timestamp) = memanggil fungsi yang dibuatkan sebelumnya
+# ERROR = menambahkan pesan error sebagai penanda terjadi kesalahan pada saat
+# script dijalankan
+
+# $* = mencetak string yang diberikan pada saat menjalankan fungsi log
+# NB: log "cetak ke layar" => string = cetak ke layar
+# | = berfungsi untuk mengirimkan keluaran ke perintah berikutnya
+# tee = berfungsi untuk menampilkan hasil dan mengirimkan hasil ke dalam file
+# -a = berfungsi untuk menambahkan hasil keluaran ke baris paling akhir
+# $PROGRESS_LOG = nama file yang digunakan untuk file log
+
+# >&2 = berfungsi untuk menyimpan hasil kesalahan ketika script dijalankan
+# NB: Perintah ini nantinya memberikan keluaran dalam bentuk kesalahan yang 
+# terjadi pada perintah
+
+printf "%s %s\n" "$(timestamp)" "ERROR: $*" | tee -a "$PROGRESS_LOG" >&2
+
+# Fungsi ini nantinya digunakan untuk menampilkan setiap pesan kesalahan yang terjadi
+# pada saat perintah dijalankan
+}
