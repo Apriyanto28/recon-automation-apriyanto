@@ -138,3 +138,7 @@ printf "%s %s\n" "$(timestamp)" "ERROR: $*" | tee -a "$PROGRESS_LOG" >&2
 # Fungsi ini nantinya digunakan untuk menampilkan setiap pesan kesalahan yang terjadi
 # pada saat perintah dijalankan
 }
+
+# Perintah ini berfungsi untuk memasukkan setiap kesalahan pada perintah ke dalam
+# file error.log yang sudah dibuat sebelumnya
+exec 2>>"$ERROR_LOG"
