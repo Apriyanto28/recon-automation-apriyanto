@@ -215,3 +215,6 @@ while IFS= read -r domain || [ -n "$domain" ]; do
 # Mengakhiri perulangan
 done < "$INPUT_FILE"
 
+# Menampilkan hasil mengenai jumlah sub-domain yang didapatkan dari semua domain yang
+# diproses
+log "[*] All domains processed. Total unique subdomains: $(wc -l < "$ALL_SUBS" || echo 0)"
