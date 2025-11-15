@@ -142,3 +142,76 @@ printf "%s %s\n" "$(timestamp)" "ERROR: $*" | tee -a "$PROGRESS_LOG" >&2
 # Perintah ini berfungsi untuk memasukkan setiap kesalahan pada perintah ke dalam
 # file error.log yang sudah dibuat sebelumnya
 exec 2>>"$ERROR_LOG"
+
+
+# Menjalankan proses recon
+
+# Mencetak log informasi untuk proses berjalan
+log "=== Memulai Proses recon-auto.sh ==="
+log "File berisi nama domain: $INPUT_FILE"
+
+# Menghapus semua isi log yang pernah ada sebelumnya
+: > "$ALL_SUBS"
+: > "$ALIVE_OUT"
+
+# Dikarenakan jumlah domain yang mau diproses lebih dari 1 baris, sehingga dilakukan
+# proses perulangan dengan menggunakan while
+
+# Perintah ini digunakan untuk melakukan proses perulangan
+# IFS = digunakan untuk mengosongkan spasi yang terdapat pada awal maupun akhir teks
+# read -r domain = digunakan untuk membaca 1 baris domain
+# || = perintah OR yang digunakan untuk memilih salah satu yang benar
+# [-n "$domain"] = berfungsi untuk memastikan kalau masih ada domain yang mau diproses
+while IFS= read -r domain || [ -n "$domain" ]; do
+  # xargs = menghapus spasi yang ada didepan maupun dibelakang
+  domain="$(echo "$domain" | xargs)" 
+
+  # -z = melanjutkan ke proses berikutnya apabila baris kosong
+  [ -z "$domain" ] && continue
+
+  # \# = melanjutkan proses apabila menjumpain komentar
+  case "$domain" in \#*) continue ;; esac
+
+  # Mencetak ke dalam layar mengenai domain yang sedang diproses
+  log "[*] Processing domain: $domain"
+
+  # Membuat 2 buah file yang digunakan untuk masing-masing proses yang dilakukan
+
+  # Membuat file untuk menampung hasil perintah subfinder
+  SF_OUT="$TMPDIR/${domain}_subfinder.txt"
+
+  # Membuat file untuk menampung hasil perintah amass
+  AMASS_OUT="$TMPDIR/${domain}_amass.txt"
+
+  # Mejalankan perintah subfinder
+  log "    - running subfinder for $domain"
+  subfinder -d "$domain" -silent -nW -o "$SF_OUT" || {
+    err "subfinder failed for $domain (continuing)"
+  }
+
+  # Menjalankan perintah amass
+  log "    - running amass (passive) for $domain"
+  amass enum -passive -d "$domain" -o "$AMASS_OUT" || {
+    err "amass (passive) failed for $domain (continuing)"
+  }
+
+  # Menggabungkan hasil pencarian menggunakan perintah subfinder dan amass
+
+  # Melakukan pengecekan apakah file ada hasil dari subfinder
+  if [ -f "$SF_OUT" ]; then
+    # Jika ada, gabungkan dengan isi ke dalam file ALL_SUBS
+    cat "$SF_OUT" | anew "$ALL_SUBS" > /dev/null || true
+  fi
+
+  # Melakukan pengecekan apakah file ada hasil dari amss
+  if [ -f "$AMASS_OUT" ]; then
+    # Jika ada, gabungkan dengan isi ke dalam file ALL_SUBS
+    cat "$AMASS_OUT" | anew "$ALL_SUBS" > /dev/null || true
+  fi
+
+  # Menampilkan jumlah sub-domain yang didapatkan dari perintah subfinder dan amass
+  log "    - combined unique subdomains so far: $(wc -l < "$ALL_SUBS" || echo 0)"
+
+# Mengakhiri perulangan
+done < "$INPUT_FILE"
+
