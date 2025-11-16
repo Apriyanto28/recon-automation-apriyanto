@@ -1,0 +1,37 @@
+2025-11-16 15:24:55 === Memulai Proses recon-auto.sh ===
+2025-11-16 15:24:55 File berisi nama domain: input/domains.txt
+2025-11-16 15:24:55 [*] Processing domain: vulnweb.com
+2025-11-16 15:24:55     - running subfinder for vulnweb.com
+2025-11-16 15:26:03     - running amass (passive) for vulnweb.com
+2025-11-16 15:28:57 === Memulai Proses recon-auto.sh ===
+2025-11-16 15:28:57 File berisi nama domain: input/domains.txt
+2025-11-16 15:28:57 [*] Processing domain: vulnweb.com
+2025-11-16 15:28:57     - running subfinder for vulnweb.com
+2025-11-16 15:29:51     - running amass (passive) for vulnweb.com
+2025-11-16 15:36:33     - combined unique subdomains so far: 3
+2025-11-16 15:36:33 [*] Processing domain: nmap.org
+2025-11-16 15:36:33     - running subfinder for nmap.org
+2025-11-16 15:36:59     - running amass (passive) for nmap.org
+2025-11-16 15:43:03     - combined unique subdomains so far: 6
+2025-11-16 15:43:03 [*] Processing domain: httpbin.org
+2025-11-16 15:43:03     - running subfinder for httpbin.org
+2025-11-16 15:43:13     - running amass (passive) for httpbin.org
+2025-11-16 15:46:19     - combined unique subdomains so far: 8
+2025-11-16 15:46:19 [*] Processing domain: example.com
+2025-11-16 15:46:19     - running subfinder for example.com
+2025-11-16 16:42:49     - running amass (passive) for example.com
+2025-11-16 16:48:04     - combined unique subdomains so far: 9
+2025-11-16 16:48:04 [*] Processing domain: reqres.in
+2025-11-16 16:48:04     - running subfinder for reqres.in
+2025-11-16 16:48:08     - running amass (passive) for reqres.in
+2025-11-16 16:55:15     - combined unique subdomains so far: 13
+2025-11-16 16:55:15 [*] All domains processed. Total unique subdomains: 13
+2025-11-16 16:55:15 [*] Probing with httpx (threads=50)
+2025-11-16 16:55:27 [+] Probing finished. Live hosts count: 13
+2025-11-16 16:55:27 === SUMMARY ===
+2025-11-16 16:55:27 Unique subdomains (all-subdomains.txt): 13
+2025-11-16 16:55:27 Live hosts (live.txt): 13
+2025-11-16 16:55:27 Output files written to: output/
+2025-11-16 16:55:27 Errors (if any) appended to: logs/errors.log
+2025-11-16 16:55:27 Progress log at: logs/progress.log
+2025-11-16 16:55:27 === END recon-auto.sh ===
