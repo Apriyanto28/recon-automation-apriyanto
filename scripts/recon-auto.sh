@@ -226,7 +226,6 @@ log "[*] All domains processed. Total unique subdomains: $(wc -l < "$ALL_SUBS" |
 # dalam sekali jalan
 log "[*] Probing with httpx (threads=$HTTPX_THREADS)"
 
-
 # Menjalankan perintah httpx
 # -l "$ALL_SUBS" = digunakan untuk membaca daftar sub-domain hasil proses sebelumnya
 # -threads "$HTTPX_THREADS" = digunakan untuk menjalankan beberapa sub-domain sekaligus
@@ -237,3 +236,36 @@ httpx -l "$ALL_SUBS" -threads "$HTTPX_THREADS" -status-code -title -ip -server -
   | tee "$TMPDIR/httpx_raw.txt" > /dev/null || {
     err "httpx run failed (but continue to parse results)"
   }
+
+# Memilah hasil perintah httpx sebelumnya
+
+# Mengosongkan terlebih dahulu semua isi di dalam file
+: > "$ALIVE_OUT"
+
+# Melakukan proses perulangan kembali untuk proses penyimpanan domain dengan status 200 (OK) saja yang Live
+while IFS= read -r line || [ -n "$line" ]; do
+
+  # Lewatkan baris yang kosong
+  [ -z "$line" ] && continue
+
+  # Mengambil kolom pertama yang fokus hanya URL saja
+  url="$(echo "$line" | awk '{print $1}')"
+
+  # Mengambil kolom kedua yang berisi status kode dan angka yang terdiri dari 3 digit (200, 300, 404, dan lainnya)
+  status="$(echo "$line" | grep -oE '[0-9]{3}' | head -n1 || echo '-')"
+
+  # Mendapatkan judul dari baris yang ada dan menghapus spasi yang ada diawal dan diakhir
+  title="$(echo "$line" | sed -E 's/^[^ ]+ *[0-9]{3} *//; s/^[[:space:]]*//')"
+
+  # Membersihkan kembali judul, apabila terdapat kurung siku dan batasi tulisan hanya 200 karakter saja
+  title="$(echo "$title" | sed -E 's/\[|\]//g' | sed 's/"/'\''/g' | cut -c1-200)"
+
+  # Menyimpan hasil bersih ke dalam file
+  printf "%s [%s] [%s]\n" "$url" "$status" "$title" >> "$ALIVE_OUT"
+
+# Melanjutkan ke baris berikutnya sampai akhir
+done < "$TMPDIR/httpx_raw.txt"
+
+# Perintah ini berfokus terhadap hasil jumlah host yang aktif
+log "[+] Probing finished. Live hosts count: $(wc -l < "$ALIVE_OUT" || echo 0)"
+
