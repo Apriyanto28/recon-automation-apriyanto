@@ -116,7 +116,7 @@ http://example.com [200] [Example Domain]
 
 ---
 
-## atatan Etika
+## Catatan Etika
 
 * Hanya lakukan recon pada target yang memiliki izin tertulis atau berada dalam allowed scope.
 * Tidak diperbolehkan melakukan scanning pada target ilegal atau tanpa persetujuan.
