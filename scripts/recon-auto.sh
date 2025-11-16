@@ -218,3 +218,22 @@ done < "$INPUT_FILE"
 # Menampilkan hasil mengenai jumlah sub-domain yang didapatkan dari semua domain yang
 # diproses
 log "[*] All domains processed. Total unique subdomains: $(wc -l < "$ALL_SUBS" || echo 0)"
+
+
+# Melanjutkan ke proses perintah httpx
+
+# Perintah ini nantinya menampilkan ke layar mengenai jumlah sub-domain yang diperiksa
+# dalam sekali jalan
+log "[*] Probing with httpx (threads=$HTTPX_THREADS)"
+
+
+# Menjalankan perintah httpx
+# -l "$ALL_SUBS" = digunakan untuk membaca daftar sub-domain hasil proses sebelumnya
+# -threads "$HTTPX_THREADS" = digunakan untuk menjalankan beberapa sub-domain sekaligus
+# -status-code -title -ip -server -silent -no-color = menampilkan detail dari code status, judul website, ip address, heeader server, dan ditampilkan tanpa perwarnaan
+# | tee "$TMPDIR/httpx_raw.txt" = menyimpan semua hasil ke dalam file httpx_raw.txt => jika berhasil
+# jika error = memberikan pesan kesalahan
+httpx -l "$ALL_SUBS" -threads "$HTTPX_THREADS" -status-code -title -ip -server -silent -no-color \
+  | tee "$TMPDIR/httpx_raw.txt" > /dev/null || {
+    err "httpx run failed (but continue to parse results)"
+  }
