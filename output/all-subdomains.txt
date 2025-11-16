@@ -1,0 +1,13 @@
+rest.vulnweb.com
+testasp.vulnweb.com
+testaspnet.vulnweb.com
+scanme.nmap.org
+chat.nmap.org
+echo.nmap.org
+eu.httpbin.org
+www.httpbin.org
+www.example.com
+www.reqres.in
+clerk.reqres.in
+app.reqres.in
+accounts.reqres.in
