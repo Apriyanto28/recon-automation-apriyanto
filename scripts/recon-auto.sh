@@ -269,3 +269,15 @@ done < "$TMPDIR/httpx_raw.txt"
 # Perintah ini berfokus terhadap hasil jumlah host yang aktif
 log "[+] Probing finished. Live hosts count: $(wc -l < "$ALIVE_OUT" || echo 0)"
 
+# Melakukan proses ringkasan terhadap hasil yang didapatkan
+log "=== SUMMARY ==="
+log "Unique subdomains (all-subdomains.txt): $(wc -l < "$ALL_SUBS" || echo 0)"
+log "Live hosts (live.txt): $(wc -l < "$ALIVE_OUT" || echo 0)"
+log "Output files written to: $OUTDIR/"
+log "Errors (if any) appended to: $ERROR_LOG"
+log "Progress log at: $PROGRESS_LOG"
+
+# Menghapus folder sementara yang digunakan sebelumnya
+rm -rf "$TMPDIR"
+log "=== END recon-auto.sh ==="
+exit 0
